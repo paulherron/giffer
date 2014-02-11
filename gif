@@ -1,14 +1,38 @@
 #!/bin/bash
 
-file=${1:-input.mp4}
-rate=${2:-24}
-method=${3:-optimizeplus}
+# Default options
+inputFile=${1:-input.mp4}
+rate=24
+method=optimizeplus
+
+# A string with command options
+options=$@
+
+# An array with all the arguments
+arguments=($options)
+
+# Loop index
+index=0
+
+for argument in $options
+do
+	# Incrementing index
+	index=`expr $index + 1`
+
+	# The conditions
+	case $argument in
+		-r|--rate) rate=${arguments[index]} ;;
+		-m|--method) method=${arguments[index]} ;;
+	esac
+done
 
 # Convert the input video to still frames.
-ffmpeg -i $file -r $rate gif_output%05d.png
+ffmpeg -i $inputFile -r $rate gif_output%05d.png
 
 # Convert the still frames to a GIF.
-convert -dispose none -delay 2 -layers $method gif_output*.png "${file%.*}.gif"
+convert -dispose none -delay 2 -layers $method gif_output*.png "${inputFile%.*}.gif"
 
 # Clean up by removing the still frames.
 rm gif_output*.png
+
+exit;
