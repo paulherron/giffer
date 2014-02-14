@@ -1,36 +1,74 @@
 #!/bin/bash
 
+usage() {
+cat << EOF
+usage: $0 options
+
+Generates a GIF from the provided video file
+
+OPTIONS:
+	-h	Show this message
+	-i	Specify an input file
+	-o	Specify an output file
+	-r	Specify an output framerate for the generated GIF
+	-m	Specify the method to use, e.g. optimize or optimizeplus
+	-c	Whether a confirmation should be requested before creating the GIF	
+EOF
+exit
+}
+
 # Default options
-inputFile=${1:-input.mp4}
+inputFile="video.mp4"
+outputFile="${inputFile%.*}.gif"
 rate=24
 method=optimizeplus
+confirm=false
 
-# A string with command options
-options=$@
-
-# An array with all the arguments
-arguments=($options)
-
-# Loop index
-index=0
-
-for argument in $options
-do
-	# Incrementing index
-	index=`expr $index + 1`
-
-	# The conditions
-	case $argument in
-		-r|--rate) rate=${arguments[index]} ;;
-		-m|--method) method=${arguments[index]} ;;
+while getopts "hi:o:r:m:c" flag; do
+	case $flag in
+		h)
+			usage
+			;;
+		i)
+			inputFile=$OPTARG
+			;;
+		o)
+			outputFile=$OPTARG
+			;;
+		r)
+			rate=$OPTARG
+			;;
+		m)
+			method=$OPTARG
+			;;
+		c)
+			confirm=true
+			;;
 	esac
 done
+
+echo "Input file:  $inputFile";
+echo "Output file: $outputFile";
+echo "Rate:        $rate";
+echo "Method:      $method";
+
+# Confirm if necessary
+if $confirm; then
+	echo "---"
+	read -p "Make GIF? [y/n] " -n 1 -r
+	echo # (optional) move to a new line
+	if [[ $REPLY =~ ^[^Yy]$ ]]
+	then
+		echo "Aborting"
+		exit
+	fi
+fi
 
 # Convert the input video to still frames.
 ffmpeg -i $inputFile -r $rate gif_output%05d.png
 
 # Convert the still frames to a GIF.
-convert -dispose none -delay 2 -layers $method gif_output*.png "${inputFile%.*}.gif"
+convert -dispose none -delay 2 -layers $method gif_output*.png "$outputFile"
 
 # Clean up by removing the still frames.
 rm gif_output*.png
