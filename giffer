@@ -19,7 +19,6 @@ exit
 
 # Default options
 inputFile="video.mp4"
-outputFile="${inputFile%.*}.gif"
 rate=24
 method=optimizeplus
 confirm=false
@@ -46,6 +45,10 @@ while getopts "hi:o:r:m:c" flag; do
 			;;
 	esac
 done
+
+if [[ -z "$outputFile" ]]; then
+	outputFile="${inputFile%.*}.gif"
+fi
 
 echo "Input file:  $inputFile";
 echo "Output file: $outputFile";
