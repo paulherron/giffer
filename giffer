@@ -57,8 +57,7 @@ if $confirm; then
 	echo "---"
 	read -p "Make GIF? [y/n] " -n 1 -r
 	echo # (optional) move to a new line
-	if [[ $REPLY =~ ^[^Yy]$ ]]
-	then
+	if [[ $REPLY =~ ^[^Yy]$ ]]; then
 		echo "Aborting"
 		exit
 	fi
@@ -73,4 +72,4 @@ convert -dispose none -delay 2 -layers $method gif_output*.png "$outputFile"
 # Clean up by removing the still frames.
 rm gif_output*.png
 
-exit;
+exit
