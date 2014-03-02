@@ -22,6 +22,7 @@ inputFile="video.mp4"
 rate=24
 method=optimizeplus
 confirm=false
+tmpPrefix="giffer_tmp_"
 
 while getopts "hi:o:r:m:c" flag; do
 	case $flag in
@@ -67,12 +68,12 @@ if $confirm; then
 fi
 
 # Convert the input video to still frames.
-ffmpeg -i $inputFile -r $rate gif_output%05d.png
+ffmpeg -i $inputFile -r $rate $tmpPrefix%05d.png
 
 # Convert the still frames to a GIF.
-convert -dispose none -delay 2 -layers $method gif_output*.png "$outputFile"
+convert -dispose none -delay 2 -layers $method $tmpPrefix*.png "$outputFile"
 
 # Clean up by removing the still frames.
-rm gif_output*.png
+rm $tmpPrefix*.png
 
 exit
