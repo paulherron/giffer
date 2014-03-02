@@ -70,6 +70,11 @@ fi
 # Convert the input video to still frames.
 ffmpeg -i $inputFile -r $rate $tmpPrefix%05d.png
 
+if [ $? -ne 0 ]; then
+	echo "Error generating still frames"
+	exit
+fi
+
 # Convert the still frames to a GIF.
 convert -dispose none -delay 2 -layers $method $tmpPrefix*.png "$outputFile"
 
