@@ -53,6 +53,9 @@ fi
 
 echo "Input file:  $inputFile";
 echo "Output file: $outputFile";
+if [ -f $outputFile ]; then
+	echo "[File exists and will be overwritten!]"
+fi
 echo "Rate:        $rate";
 echo "Method:      $method";
 
